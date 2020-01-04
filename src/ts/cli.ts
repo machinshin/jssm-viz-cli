@@ -57,7 +57,14 @@ async function render_to_png(fsl_code: string) {
 
 
 async function run() {
-  console.log(await render('hi -> hello -> hi_there;'));
+  console.log(await render(`
+
+machine_name: "Traffic light example";
+
+Green 'next' => Yellow 'next' => Red 'next' => Green;
+[Red Yellow Green] ~> Off -> Red;
+
+  `));
 }
 
 
