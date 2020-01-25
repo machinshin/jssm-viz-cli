@@ -1,15 +1,15 @@
 {
   "compilerOptions" : {
+    "lib"                            : [ "es2017", "dom" ],
     "module"                         : "CommonJS",
     "moduleResolution"               : "node",
-    "suppressImplicitAnyIndexErrors" : true,
     "noEmitOnError"                  : true,
+    "outDir"                         : "./dist/",
     "removeComments"                 : true,
+    "resolveJsonModule"              : true,
     "sourceMap"                      : true,
-    "target"                         : "ES2017",
-    "lib"                            : [ "es2017", "dom" ],
-    "outDir"                         : "./build/",
-    "resolveJsonModule"              : true
+    "suppressImplicitAnyIndexErrors" : true,
+    "target"                         : "ES2017"
   },
   "include" : [
     "src/ts/**/*"

@@ -1,29 +1,29 @@
-
-// shebang is in rollup banner; see bin-rollup.config.js
-
+#!/usr/bin/node
 
 
 
 
 const app = require('commander');
+const { promisify } = require('util');
+const fs = require('fs');
+const readFile = promisify(fs.readFile);
+
 
 import { version }           from '../../package.json';
 import { fsl_to_svg_string } from 'jssm-viz';
 
-import Viz from 'viz.js';
-import { Module, render } from 'viz.js/full.render.js';
-import * as sharp from 'sharp';
+import * as sharp            from 'sharp';
 import { file_type }         from './types';
 
 
-const viz = new Viz({ Module, render });
-
+// app.on('option:verbose', function () { process.env.VERBOSE = this.verbose; })
 
 app
   .version(version)
+  .option('-d --debug',               'Output extra debugging info')
   .option('-s, --source <glob>',      'The input source file, as a glob, such as foo.fsl or ./**/*.fsl')
   .option('--svg <default>',          'Produce output in SVG format (default if no formats specified)')
-  .option('--png',                    'Produce output in PNG format', render_to_png)
+  .option('--png',                    'Produce output in PNG format')
   .option('--jpg',                    'Produce output in JPEG format, with a .jpg extension')
   .option('--jpeg',                   'Produce output in JPEG format, with a .jpeg extension')
   .option('--gif',                    'Produce output in GIF format')
@@ -36,7 +36,11 @@ app
   .option('--toinplacedir <dir>',     'Output a matching tree from source to a specified directory')
   .option('--tosourcenameddir <dir>', 'Output slugged names to a specified directory');
 
+app.parse(process.argv)
 
+if (app.debug) console.log(app.opts());
+
+const sourceFsl = app.source
 
 
 
@@ -57,6 +61,10 @@ async function render_to_png(fsl_code: string) {
 
 
 async function run() {
+  // const fsl = readFile('./traffic-light.fsl');
+  // fsl_to_svg_string(fsl).then((svg) => {
+    // return sharp(svg).png().toFile(app.png)
+  // });
   console.log(await render(`
 
 machine_name: "Traffic light example";

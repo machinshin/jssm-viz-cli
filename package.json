@@ -7,14 +7,14 @@
     "doc": "docs"
   },
   "bin": {
-    "jssm-viz": "dist/js/shebang.js"
+    "jssm-viz": "dist/src/ts/cli.js"
   },
   "scripts": {
-    "clean": "rimraf -f build/ && rimraf -f dist/ && rimraf -f docs/ && mkdir build && mkdir dist && cd dist && mkdir js && cd .. && mkdir docs",
-    "docs": "cp src/svg/traffic-light-example.svg docs/",
-    "dist": "cp build/src/ts/cli.* dist/js/ && cp src/js/shebang.js dist/js/",
-    "typescript": "tsc --build tsconfig.json",
-    "build": "npm run clean && npm run typescript && npm run dist && npm run docs",
+    "clean": "rimraf -f dist/ && rimraf -f docs/ && mkdir -p dist/js docs",
+    "docs": "cp src/svg/*.svg docs/",
+    "typescript": "tsc --project tsconfig.json",
+    "start": "node ./dist/src/ts/cli.js",
+    "build": "npm run clean && npm run typescript && npm run docs",
     "test": "echo Temporarily skipped"
   },
   "repository": {
@@ -36,31 +36,29 @@
     "state-machine"
   ],
   "author": "John Haugeland <stonecypher@gmail.com>",
+  "contributors": [
+    {
+      "name": "Vat Raghavan",
+      "email": "machinshin@gmail.com",
+      "url": "https://github.com/machinshin"
+    }
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/StoneCypher/jssm-viz-cli/issues"
+    "url": "https://github.com/StoneCypher/fsl/issues"
   },
   "homepage": "https://github.com/StoneCypher/jssm-viz-cli#readme",
   "dependencies": {
-    "commander": "^4.0.1",
+    "commander": "^4.1.0",
     "jssm-viz": "^1.6.2"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",
+    "glob": "^7.1.6",
     "rimraf": "^3.0.0",
-<<<<<<< HEAD
-    "rollup": "^1.27.14",
-    "rollup-plugin-ignore": "^1.0.5",
-    "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-typescript2": "^0.25.3",
     "sharp": "^0.23.4",
     "tslib": "^1.10.0",
     "typescript": "^3.7.4",
     "viz.js": "^2.1.2"
-  },
-  "dependencies": {}
-=======
-    "typescript": "^3.7.4"
   }
->>>>>>> 8eb761c9f6475aeba3bf63016fb38ee339b249c1
 }
