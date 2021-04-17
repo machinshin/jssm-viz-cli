@@ -1,22 +1,24 @@
 #!/usr/bin/node
 
+let DEBUG = false;
 
 
-
-const app = require('commander');
-const { promisify } = require('util');
-const fs = require('fs');
-const readFile = promisify(fs.readFile);
 
 
 import { version }           from '../../package.json';
-import { fsl_to_svg_string } from 'jssm-viz';
 
 import * as sharp            from 'sharp';
-import { file_type }         from './types';
+import { image_file_type, raw_file_type, fsl_file_type, viz_file_type  } from './types';
+import { fsl_to_svg_string, fsl_to_dot } from 'jssm-viz';
+import * as util             from 'util';
+import { readFile }          from 'fs';
+
+const readFileAsync     =    util.promisify(readFile);
+
+const app               =    require('commander');
 
 
-// app.on('option:verbose', function () { process.env.VERBOSE = this.verbose; })
+
 
 app
   .version(version)
@@ -38,33 +40,51 @@ app
 
 app.parse(process.argv)
 
-if (app.debug) console.log(app.opts());
 
-const sourceFsl = app.source
 
+
+function hasOutputOptions(app) {
+  return app.png || app.webp || app.jpeg || app.jpg || app.tree || app.dot || app.svg || app.gif; 
+}
 
 
 async function render(fsl_code: string): Promise<string> {
-
   const svg_code: string = await fsl_to_svg_string(fsl_code);
-
   return svg_code;
-
 }
-
-async function render_to_png(fsl_code: string) {
-  if (app.png === undefined) { console.log('we need a filename')} 
-  const svg_code = await render(fsl_code);
-  sharp(svg_code).toFile(app.png)
-}
-
 
 
 async function run() {
+
+  if (app.debug) {
+    console.log(app.opts());
+    DEBUG = true;
+  }
+
+  if (!hasOutputOptions(app)) {
+    console.error('Output type must be specified!');
+    process.exit(-1);
+  }
+
+  const svg_code  = await render(readFileAsync(app.source).toString());
+  
+  const outFile = app.source.replace('fsl', raw_file_type);
+
+  if (app[raw_file_type]) {
+    fs.writeFile(outFile, svg_code );
+  }
+
+
+  if (app[image_file_type]) {
+    sharp()
+  } 
+
+
   // const fsl = readFile('./traffic-light.fsl');
   // fsl_to_svg_string(fsl).then((svg) => {
     // return sharp(svg).png().toFile(app.png)
   // });
+  /*
   console.log(await render(`
 
 machine_name: "Traffic light example";
@@ -73,6 +93,7 @@ Green 'next' => Yellow 'next' => Red 'next' => Green;
 [Red Yellow Green] ~> Off -> Red;
 
   `));
+  */
 }
 
 
@@ -80,3 +101,10 @@ Green 'next' => Yellow 'next' => Red 'next' => Green;
 
 
 run();
+
+
+async function render_to_png(fsl_code: string) {
+  if (app.png === undefined) { console.log('we need a filename')} 
+  const svg_code = await render(fsl_code);
+  sharp(svg_code).toFile(app.png)
+}
